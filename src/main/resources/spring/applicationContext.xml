@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	 http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	 http://www.springframework.org/schema/context
+	 http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	 http://www.springframework.org/schema/aop
+	 http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	 http://www.springframework.org/schema/task
+	 http://www.springframework.org/schema/task/spring-task-3.0.xsd"
+	default-lazy-init="false">
+	<description>Spring公共配置文件</description>
+	
+	<context:component-scan base-package="com" />
+	<!-- aspectj支持自动代理实现AOP功能 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<!-- 引入属性文件，在配置中占位使用 -->
+	<context:property-placeholder location="classpath*:conf/*.properties"/>
+
+
+	<!-- 离线数据源配置、对应jdbc.properties -->
+	<import resource="applicationContext-off-db.xml" />
+	<!-- 在线数据源配置、对应online.jdbc.properties 	-->
+	<import resource="applicationContext-online-db.xml" />
+
+	<!-- 腾讯代理抓取数据定时器配置
+	<import resource="tencentAgent-off-timer.xml" />-->
+	<!-- 腾讯注入:新增、修改、删除、删除关联关系 -->
+	<import resource="tencentTrans-off-timer.xml" />
+	
+	<!-- 爱视抓取数据定时器配置 chendaodeng_lx 2018.07.02 添加-->
+	<!-- 
+	<import resource="ottTransferAgent-off-timer.xml" /> 
+	-->
+
+	<!-- 初始化腾讯代理配置 -->
+	<!--<bean class="com.coship.tencent.common.TencentAgentConfig" init-method="initConfig"></bean>
+		<bean class="com.snm.util.SpringContextHolder" />-->
+	
+	<!-- 开启这个配置，spring才能识别@Scheduled注解 --> 
+	<task:executor id="executor" pool-size="50" />  
+    <task:scheduler id="schedule" pool-size="10" />  
+    <task:annotation-driven executor="executor" scheduler="schedule" />  
+
+	  
+</beans>

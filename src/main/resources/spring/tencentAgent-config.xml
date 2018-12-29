@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+	<!-- 腾讯获取栏目相关信息配置 -->
+	<tencent>
+		<!-- 1. 插入数据的父栏目id -->
+		<portal_nodeId>2</portal_nodeId>
+		<!-- 1. 插入数据的父栏目code -->
+		<portal_nodeCode>x_tencent</portal_nodeCode>
+		<!-- 2. 获取一级栏目地址 -->
+		<channelUrl>http://tv.aiseet.atianqi.com/i-tvbin/qtv_video/channel_list/get_channel_list</channelUrl>
+		<!-- 只取认可的栏目 -->
+		<channelAccept>电影、电视剧、动漫、综艺、少儿、好莱坞、中国好声音、娱乐、纪录片、音乐、体育、动漫</channelAccept>
+		<!-- 3. 获取二级栏目地址 -->
+		<channelFilterUrl>http://tv.aiseet.atianqi.com/i-tvbin/qtv_video/channel_filter/get_filter</channelFilterUrl>
+		<!-- 4. 获取二级关联视频信息地址  -->
+		<videoListUrl>http://tv.aiseet.atianqi.com/i-tvbin/qtv_video/video_list/get_video_list</videoListUrl>
+		<!-- 5. 获取子集列表视频信息地址  -->
+		<subVideoListUrl>http://tv.aiseet.atianqi.com/i-tvbin/qtv_video/cover_details/get_cover_videos</subVideoListUrl>
+		<!-- 6. 获取专题基本信息  -->
+		<specialBasicUrl>http://tv.aiseet.atianqi.com/i-tvbin/qtv_video/cover_details/get_cover_basic</specialBasicUrl>
+		<!-- 7. 获取往期节目  -->
+		<specialInfoUrl>http://tv.aiseet.atianqi.com/i-tvbin/qtv_video/column_info/get_column_info</specialInfoUrl>
+		<!-- 8. 精选数据  -->
+		<homePageUrl>http://tv.aiseet.atianqi.com/i-tvbin/qtv_video/home_page/get_home_page</homePageUrl>
+		<!-- 5. Q-UA：通用参数，放在Header里面 -->
+		<qua>QV%3D1%26PR%3DVIDEO%26PT%3DSNMBOX%26CHID%3D13031%26RL%3D1920*1080%26VN%3D3.0.0%26VN_CODE%3D120%26SV%3D4.4.2%26DV%3DMiBOX2%26VN_BUILD%3D0</qua>
+<!-- 	老不已经不用	
+        <qua>QV%3D1%26PR%3DVIDEO%26PT%3DCH%26CHID%3D10009%26RL%3D1920*1080%26VN%3D3.0.0%26VN_CODE%3D120%26SV%3D4.4.2%26DV%3DMiBOX2%26VN_BUILD%3D0</qua> -->
+		
+		<!-- 6. HTTP_Q_GUID：设备唯一标识，放在Header里面 -->
+		<guid>04E2B48A00E081E13F01066CF2B9E637</guid>
+<!-- 	老不已经不用
+    	<guid>95c60a8d505a0d308b59facbe05d7bfe</guid> -->
+		<!-- 7. v_cgi_ver：该cgi接口的版本 ,和接口人协商使用那个版本,目前版本为1.0-->
+		<v_cgi_ver>1.0</v_cgi_ver>
+		<!-- 8. req_from：请求来源 -->
+		<req_from>test</req_from>
+		<!-- 9. 返回数据格式json或者jce，默认返回json -->
+		<format>json</format>
+		<!-- 10. 频道类型,多个频道类型使用加号"+"连接，例如channel_types="1+2+3" all是全部类型-->
+		<channel_types>all</channel_types>
+		<!-- 11. 过滤器选择器 (single,multi,all)-->
+		<filter_selector>single</filter_selector>
+		<!-- 12. 固定值 -->
+		<platform>8</platform>
+		<!-- 13. 每页请求的视频个数，最大不能大于32 -->
+		<pagesize>20</pagesize>
+		<!-- 14. 排除的频道过滤信息chi_name -->
+		<exclude_column>全部,最新,最热</exclude_column>
+		
+		<!-- 获取腾讯直播内容   add by wx@20150923 -->
+		<liveUrl>http://1.tv.aiseet.atianqi.com/i-tvbin/qtv_video/live_details/get_live_schedule?format=json&amp;req_from=SNMBOX_APK&amp;tv_cgi_ver=1.0&amp;live_status_filter=1,2,3&amp;cid_filter=no&amp;site_selector=all&amp;start_time=0&amp;end_time=0&amp;pictures=180x180,120x120&amp;Q-UA=QV%3D1%26PR%3DVIDEO%26PT%3DSNMBOX%26CHID%3D13031%26RL%3D1920*1080%26VN%3D1.3.0%26VN_CODE%3D124%26SV%3D4.4.2%26DV%3Ddredd%26VN_BUILD%3D27%26MD%3DMiBOX2%26BD%3Ddredd&amp;Q-AS=IS_AUTO%3D1</liveUrl>
+		<!-- 腾讯直播内容锁定时间（min）， 距节目开始时间半小时内数据不做处理  add by wx@20150924 -->
+		<lockTime>30</lockTime>
+	</tencent>
+	
+	<!-- 管理员配置 ， 和资源中心配置同时配置时候管理员配置优先-->
+	<admin>	
+		<name>coship</name>
+		<password>111111</password>
+	</admin>
+	
+	<!-- 资源中心配置， 和管理员配置同时配置时候管理员配置优先 -->
+	<urm>
+		<code>tencent</code>
+		<url>http://172.30.25.245:9999/urm</url>
+	</urm>
+	
+	<job>
+		<!-- 同步腾讯栏目数据表达式（每周星期天凌晨1点开始同步） -->
+		<syncColumnCro>0 0 1 ? * L</syncColumnCro>
+		<!-- 同步腾讯栏目数据表达式（每天1点开始同步） -->
+		<!-- <syncColumnCro>0 0 1 * * ?</syncColumnCro> -->
+	</job>
+</config>

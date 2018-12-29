@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tool="http://www.springframework.org/schema/tool"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd"
+	default-lazy-init="false">
+	<description>hibernate公共模块配置文件</description>
+
+
+	<bean id="online_dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass">
+			<value>${online.jdbc.driverClassName}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${online.jdbc.url}</value>
+		</property>
+		<property name="user">
+			<value>${online.jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${online.jdbc.password}</value>
+		</property>
+
+		<property  name="acquireIncrement">
+			<value>${online.c3p0.acquireIncrement}</value>
+		</property>
+		<property  name="initialPoolSize">
+			<value>${online.c3p0.initialPoolSize}</value>
+		</property>
+		<property  name="minPoolSize">
+			<value>${online.c3p0.minPoolSize}</value>
+		</property>
+		<property  name="maxPoolSize">
+			<value>${online.c3p0.maxPoolSize}</value>
+		</property>
+		<property  name="maxIdleTime">
+			<value>${online.c3p0.maxIdleTime}</value>
+		</property>
+		<property  name="idleConnectionTestPeriod">
+			<value>${online.c3p0.idleConnectionTestPeriod}</value>
+		</property>
+		<property  name="maxStatements">
+			<value>${online.c3p0.maxStatements}</value>
+		</property>
+		<property  name="numHelperThreads">
+			<value>${online.c3p0.numHelperThreads}</value>
+		</property>
+		<property  name="testConnectionOnCheckout">
+			<value>${online.c3p0.testConnectionOnCheckout}</value>
+		</property>  
+		<property  name="preferredTestQuery">
+			<value>${online.c3p0.preferredTestQuery}</value>
+		</property>
+		<property  name="breakAfterAcquireFailure">
+			<value>${online.c3p0.breakAfterAcquireFailure}</value>
+		</property>
+		<property  name="acquireRetryAttempts">
+			<value>${online.c3p0.acquireRetryAttempts}</value>
+		</property> 
+		
+	</bean>
+  <bean id="online_sessionFactory" 
+        class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="online_dataSource" />
+		<property name="packagesToScan">
+			<list>
+				<value>com.snm.model.online</value>
+				<value>com.apache.domain</value>
+			</list>
+		</property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">none</prop>
+                <prop key="hibernate.dialect">${online.hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">${online.hibernate.show_sql}</prop>
+                <prop key="hibernate.form_sql">${online.hibernate.form_sql}</prop>  
+				<prop key="hibernate.connection.username">${online.jdbc.username}</prop>  
+				<prop key="hibernate.connection.password">${online.jdbc.password}</prop>  
+				<prop key="hibernate.connection.url">${online.jdbc.url}</prop>
+				<prop key="hibernate.default_batch_fetch_size">30</prop> 
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop> 
+            </props>
+        </property>
+    </bean>
+
+	<bean id="lobHandler" lazy-init="true"
+		class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
+		
+	<bean id="online_transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="online_sessionFactory" />
+	</bean>
+
+     <bean id="onlineMethodDao" class="com.apache.dc.dal.MethodDao">
+		 <property name="sessionFactory" ref="online_sessionFactory" />
+	</bean>
+	
+	<bean id="onlineDBPool" class="com.apache.dc.service.imp.DBPoolStaticService">
+		 <property name="dataSource" ref="online_dataSource" />
+	</bean>
+     
+     <bean id="onlineDbCenter" class="com.apache.dc.service.imp.DBCenterImpl">
+     	 <property name="methodCachedDao" ref="onlineMethodDao" />
+     	  <property name="dbPoolStaticService" ref="onlineDBPool" />
+     </bean>
+	
+	<!-- 使用annotation定义事务 -->
+	<tx:annotation-driven transaction-manager="online_transactionManager" />
+
+	
+</beans>

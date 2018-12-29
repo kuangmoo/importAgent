@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc='http://www.springframework.org/schema/mvc'
+	xsi:schemaLocation="http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/mvc
+          http://www.springframework.org/schema/mvc/spring-mvc.xsd
+          ">
+
+	<!-- 
+	每隔12小时执行一次 0 0 0/12 * * ? * 
+	每隔01分钟执行一次 0 0/1 * * * ? * 
+	每10秒触发执行一次 0/10 * * * * ? 
+		-->
+	<!-- 回调OMS -->
+	<bean id="omsCallbackJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="omsCallback" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="omsCallbackJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="omsCallbackJob" />
+		<property name="cronExpression">
+			<value>0 0/1 * * * ? *</value>
+		</property>
+	</bean>
+	<!-- 定时解析数据来源 -->
+	<bean id="tencentADISyncServiceJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="tencentADISyncService" />
+		<property name="targetMethod" value="run" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="tencentADISyncServiceJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="tencentADISyncServiceJob" />
+		<property name="cronExpression">
+			<value>0/20 * * * * ?</value>
+		</property>
+	</bean>
+	<!-- 抓取腾讯频道数据 -->
+	<bean id="columnSyncTencentJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="auroraChannelContentService" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="columnSyncTencentTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="columnSyncTencentJob" />
+		<property name="cronExpression">
+			<!--<value>0 38 16 ? * *</value>  -->
+			<value>0 0/1 * * * ? *</value>
+			<!-- <value>0 0 2 * * ?</value> -->
+		</property>
+	</bean>
+	<!-- 删除腾讯频道数据 -->
+	<bean id="columnDelTencentJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="auroraChannelContentService" />
+		<property name="targetMethod" value="delInvalidData" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="columnDelTencentTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="columnDelTencentJob" />
+		<property name="cronExpression">
+			<value>0 0 0/12 * * ? *</value>
+		</property>
+	</bean>
+	
+	<!--定时处理xml文件 	
+	<bean id="TimedTaskJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="xmlTimedTask" />
+		<property name="targetMethod" value="xmlTask" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="TimedTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="TimedTaskJob" />
+		<property name="cronExpression">
+			<value>0 0/1 * * * ? *</value>
+		</property>
+	</bean>
+-->
+	
+	<!-- ######## 总调配中心 ########## -->
+	<bean id="schedulerFactory"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="autoStartup" value="true" />
+		 <property name="quartzProperties">
+		   <props>
+		    <prop key="org.quartz.scheduler.instanceName">Validata_Worker</prop>
+		    <prop key="org.quartz.threadPool.threadCount">100</prop>
+		    <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+		   </props>
+         </property>
+		<property name="triggers">
+			<list>
+				<!-- 抓取腾讯频道数据-->
+				<ref bean="columnSyncTencentTrigger" /> 
+				<!-- 删除腾讯频道数据-->
+				<ref bean="columnDelTencentTrigger" /> 
+				
+				<!-- 定时处理xml文件 
+				<ref bean="TimedTaskTrigger" /> 
+				  -->
+				<!-- 
+				 回调OMS
+				
+				<ref bean="omsCallbackJobTrigger" /> -->
+				<!-- 
+				<ref bean="tencentADISyncServiceJobTrigger"/>
+				 -->
+			</list>
+		</property>
+	</bean>
+</beans>

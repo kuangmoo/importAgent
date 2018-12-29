@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ssS}-[%t]-[%p]-[%r]-[%l] %m%n" />
+		</layout>
+	</appender>
+
+	<!--class定义日志记录器-->
+	<appender name="INFO" class="org.apache.log4j.DailyRollingFileAppender">
+		<!--相对于应用服务器的输出路径,应用服务器的路径指定在common包中指定-->
+		<param name="File" value="log/app-info.log" />
+		<!--是否追加写入文件 true-是 false-否,此部分不建议改动-->
+		<param name="Append" value="true" />
+		<!--输出的日志文件格式,根据操作系统编码指定-->
+		<param name="Encoding" value="UTF8" />
+		<param name="BufferedIO" value="false" />
+		<param name="BufferSize" value="8192" />
+		<!--log4j的打印日志布局,可参考相关log4j文档设置-->
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ssS}-[%t]-[%p]-[%r]-[%l] %m%n" />
+		</layout>
+		<!--日志级别过滤器-->
+		<!--LogMinLevel表示最小的级别,LogMaxLevel表示最大的级别,建议不做改动-->
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="INFO" />
+			<param name="LevelMax" value="INFO" />
+		</filter>
+	</appender>
+	
+	<appender name="ERROR" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="log/app-error.log" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd"></param> 
+		<param name="Append" value="true" />
+		<param name="Encoding" value="UTF8" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ssS}-[%t]-[%p]-[%r]-[%l] %m%n" />
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="LevelMin" value="ERROR" />
+			<param name="LevelMax" value="ERROR" />
+		</filter>
+	</appender>
+	
+	 <appender name="LOG.TENCENTTRANS" class="org.apache.log4j.DailyRollingFileAppender">  
+        <param name="File" value="log/tencenttrans/app.log" />
+		<param name="DatePattern" value="'.'yyyyMMdd_HH" />
+		<param name="Append" value="true" />
+		<param name="Encoding" value="UTF8" />
+		<param name="BufferedIO" value="false" />
+		<param name="BufferSize" value="8192" />		
+        <layout class="org.apache.log4j.PatternLayout">  
+            <param name="ConversionPattern" value="%m%n" />  
+        </layout>  
+        <filter class="com.snm.tencenttrans.filter.TencentTransLogFilter">  
+            <param name="LevelMin" value="20050" />  
+            <param name="LevelMax" value="20050" />  
+        </filter>  
+    </appender>  
+    
+    <!-- 哔哩哔哩注入日志 -->
+	<appender name="LOG.BILIBILI" class="org.apache.log4j.DailyRollingFileAppender">  
+        <param name="File" value="log/bilibili/app.log" />
+		<param name="DatePattern" value="'.'yyyyMMdd_HH" />
+		<param name="Append" value="true" />
+		<param name="Encoding" value="UTF8" />
+		<param name="BufferedIO" value="false" />
+		<param name="BufferSize" value="8192" />		
+        <layout class="org.apache.log4j.PatternLayout">  
+            <param name="ConversionPattern" value="%m%n" />  
+        </layout>  
+        <filter class="iptv.transfer.bilibili.filter.BiliLogFilter">  
+            <param name="LevelMin" value="20050" />  
+            <param name="LevelMax" value="20050" />  
+        </filter>  
+    </appender> 
+	<!-- 电视猫注入日志 -->
+	<appender name="LOG.TVMORE" class="org.apache.log4j.DailyRollingFileAppender">  
+        <param name="File" value="log/tvmore/app.log" />
+		<param name="DatePattern" value="'.'yyyyMMdd_HH" />
+		<param name="Append" value="true" /> 
+		<!--param name="MaxFileSize" value="200MB" />		
+		<param name="MaxBackupIndex" value="100" />
+		<param name="BackFilePath" value="/usr/local/backup/ottol/log/tvmore"/-->
+		<param name="Encoding" value="UTF8" />
+		<param name="BufferedIO" value="false" />
+		<param name="BufferSize" value="8192" />		
+        <layout class="org.apache.log4j.PatternLayout">  
+            <param name="ConversionPattern" value="%m%n" />  
+        </layout>  
+        <filter class="iptv.transfer.tvmore.filter.TvmoreLogFilter">  
+            <param name="LevelMin" value="20050" />  
+            <param name="LevelMax" value="20050" />  
+        </filter>  
+    </appender>  	
+   <!-- 腾讯xml文件写入日志  每天一个文件 -->  
+    <appender name="LOG.TENCENTXML" class="org.apache.log4j.DailyRollingFileAppender">  
+        <param name="File" value="log/tencentXML/app.log"></param>  
+        <param name="DatePattern" value="'.'yyyy-MM-dd"></param> 
+        <param name="Append" value="true" /> 
+        <!-- 
+		<param name="MaxFileSize" value="200MB" />		
+		<param name="MaxBackupIndex" value="100" />
+		<param name="BackFilePath" value="usr/local/backup/ottol/log/tencentXML"/>
+		-->
+		<param name="Encoding" value="UTF8" /> 
+        <param name="ImmediateFlush" value="true"></param>  
+        <layout class="org.apache.log4j.PatternLayout">  
+            <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ssS}-[%t]-[%p]-[%r]-[%l] %m%n" />  
+        </layout> 
+        <filter class="com.snm.receive.filter.TencentXmlFilter">  
+            <param name="LevelMin" value="20052" />  
+            <param name="LevelMax" value="20052" />  
+        </filter> 
+    </appender>
+   
+	<root>
+		<!--定义日志的最低输出级别-->
+		<priority value="all" />
+		<!--引用的日志记录器-->
+		<appender-ref ref="LOG.TENCENTTRANS" />  
+		<appender-ref ref="LOG.BILIBILI" />  
+		<appender-ref ref="LOG.TVMORE" />  
+   		<appender-ref ref="STDOUT" />    
+		<appender-ref ref="DEBUG" />
+		<appender-ref ref="INFO" />
+		<appender-ref ref="WARN" />
+		<appender-ref ref="ERROR" />
+		<appender-ref ref="LOG.TENCENTXML" />
+	</root>
+
+</log4j:configuration>
